@@ -6,61 +6,64 @@ byte player_num = 0;
 byte chosen_player = 6;
 Timer warn_timer;
 Timer check_timer;
+void setup(){
+  
+}
 void loop() {
-	switch (signalState) {
+  switch (signalState) {
         case PREPARE:
-    		prepareLoop();
-        	break;
-      	case INERT:
-      	case GO:
-      	case RESOLVE:
-        	playLoop();
-        	break;
-      	case CHECK:
-        	checkLoop();
-        	break;
-      	case END:
-        	endLoop();
-        	break;
+        prepareLoop();
+          break;
+        case INERT:
+        case GO:
+        case RESOLVE:
+          playLoop();
+          break;
+        case CHECK:
+          checkLoop();
+          break;
+        case END:
+          endLoop();
+          break;
     }
 }
 
 void prepareLoop() {
-  	FOREACH_FACE(f) {
-  		if (getSignalState(getLastValueReceivedOnFace(f)) == INERT) {
+    FOREACH_FACE(f) {
+      if (getSignalState(getLastValueReceivedOnFace(f)) == INERT) {
             signalState = INERT;
             player = getPlayer(getLastValueReceivedOnFace(f));
-          	player_num = player + 1;
-			byte sendData = (signalState << 3) + (player);
-        	setValueSentOnAllFaces(sendData);
-    	}
-  		else {
-	        if (player_num == 0) {
-    	        setColor(OFF);
-        	}
-        	else {
-            	for ( byte i = 0; i < player_num; i ++) {
-               		setColorOnFace(getColor(i+1), i);
-            	}
-        	}
-        	if (buttonSingleClicked()) {
-            	player_num = (player_num + 1) % 7;
-        	}
-      		if (buttonDoubleClicked() && player_num != 0) {
+            player_num = player + 1;
+      byte sendData = (signalState << 3) + (player);
+          setValueSentOnAllFaces(sendData);
+      }
+      else {
+          if (player_num == 0) {
+              setColor(OFF);
+          }
+          else {
+              for ( byte i = 0; i < player_num; i ++) {
+                  setColorOnFace(getColor(i+1), i);
+              }
+          }
+          if (buttonSingleClicked()) {
+              player_num = (player_num + 1) % 7;
+          }
+          if (buttonDoubleClicked() && player_num != 0) {
                 player = player_num - 1;
                 signalState = INERT;
-				byte sendData = (signalState << 3) + (player);
-        		setValueSentOnAllFaces(sendData);
-        	}
-          	else {
-              	setValueSentOnAllFaces(0);
+        byte sendData = (signalState << 3) + (player);
+            setValueSentOnAllFaces(sendData);
+          }
+            else {
+                setValueSentOnAllFaces(0);
             }
-    	}
+      }
     }
 }
 
 void playLoop() {
-	switch (signalState) {
+  switch (signalState) {
         case INERT:
             inertLoop();
             break;
@@ -79,11 +82,11 @@ void playLoop() {
 void inertLoop() {
     //set myself to GO
     if (buttonSingleClicked()) {
-      	if (chosen_player == 6) {
-          	chosen_player = player;
+        if (chosen_player == 6) {
+            chosen_player = player;
         }
-      	else {
-          	warn_timer.set(1000);
+        else {
+            warn_timer.set(1000);
         }
         signalState = GO;
         player = (player + 1) % (player_num);//adds one to game mode, but 3+1 becomes 0
@@ -111,12 +114,12 @@ void goLoop() {
 }
 
 void resolveLoop() {
-  	if (chosen_player == 6) {
-    	signalState = INERT; //I default to this at the start of the loop. Only if I see a problem does this not happen
+    if (chosen_player == 6) {
+      signalState = INERT; //I default to this at the start of the loop. Only if I see a problem does this not happen
     }
-  	else {
-		check_timer.set(2000);
-      	signalState = CHECK;
+    else {
+    check_timer.set(2000);
+        signalState = CHECK;
     }
     //look for neighbors who have not moved to RESOLVE
     FOREACH_FACE(f) {
@@ -129,90 +132,91 @@ void resolveLoop() {
 }
 
 void checkLoop() {
-	if (check_timer.isExpired()) {
-		setColor(OFF);
-		signalState = END;
-	}
-	else {
-		setColor(WHITE);
-		FOREACH_FACE(f) {
-        	if (!isValueReceivedOnFaceExpired(f)) { //a neighbor!
-            	if (getSignalState(getLastValueReceivedOnFace(f)) == INERT) {//This neighbor isn't in RESOLVE. Stay in RESOLVE
-                	signalState = INERT;
-            	}
-        	}
-    	}
-		setValueSentOnAllFaces(6 << 3);
-	}
+  if (check_timer.isExpired()) {
+    setColor(OFF);
+    signalState = END;
+  }
+  else {
+    setColor(WHITE);
+    FOREACH_FACE(f) {
+          if (!isValueReceivedOnFaceExpired(f)) { //a neighbor!
+              if (getSignalState(getLastValueReceivedOnFace(f)) == INERT) {//This neighbor isn't in RESOLVE. Stay in RESOLVE
+                  signalState = INERT;
+              }
+          }
+      }
+    setValueSentOnAllFaces(6 << 3);
+  }
 }
 
 void endLoop() {
-	setColor(getColor(getRealPlayer(chosen_player)))
-	FOREACH_FACE(f) {
-    	if (!isValueReceivedOnFaceExpired(f)) { //a neighbor!
+  setColor(getColor(getRealPlayer(chosen_player)));
+  FOREACH_FACE(f) {
+      if (!isValueReceivedOnFaceExpired(f)) { //a neighbor!
             if (getSignalState(getLastValueReceivedOnFace(f)) == PREPARE) {//This neighbor isn't in RESOLVE. Stay in RESOLVE
-				signalState = PREPARE;
-				player = PLAYER1;
-				player_num = 0;
-				chosen_player = 6;
-              	setColor(OFF);
+        signalState = PREPARE;
+        player = PLAYER1;
+        player_num = 0;
+        chosen_player = 6;
+                setColor(OFF);
             }
-    	}
-	}
-	if (buttonDoubleClicked()) {
-		signalState = PREPARE;
-		player = PLAYER1;
-		player_num = 0;
-		chosen_player = 6;
-		setValueSentOnAllFaces(0);
-	}
+      }
+  }
+  if (buttonDoubleClicked()) {
+    signalState = PREPARE;
+    player = PLAYER1;
+    player_num = 0;
+    chosen_player = 6;
+    setValueSentOnAllFaces(0);
+  }
 }
 
 void displaySignalState() {
-  	if (warn_timer.isExpired()) {
-  		switch (signalState) {
-    		case INERT:
-      			setColor(getColor(getRealPlayer(player)));
-      			break;
-    		case GO:
-    		case RESOLVE:
-	      		setColor(WHITE);
-    	  		break;
+    if (warn_timer.isExpired()) {
+      switch (signalState) {
+        case INERT:
+            setColor(getColor(getRealPlayer(player)));
+            break;
+        case GO:
+        case RESOLVE:
+            setColor(WHITE);
+            break;
         }
-  	}
-  	else {
-      	setColor(WHITE);
+    }
+    else {
+        setColor(WHITE);
     }
 }
 
-Color getColor(data) {
-	switch (data) {
-      	case 0:
-			return (makeColorRGB(0,0,0));
-        	break;
-      	case 1:
-        	return (makeColorRGB(255,0,0));
-	        break;
-    	case 2:
-        	return (makeColorRGB(0,255,0));
-        	break;
-      	case 3:
-        	return (makeColorRGB(0,0,255));
-        	break;
-      	case 4:
-			return (makeColorRGB(255,0,255));
-	        break;
-      	case 5:
-        	return (makeColorRGB(255,255,0));
-        	break;
-      	case 6:
-        	return (makeColorRGB(0,255,255));
-        	break;
+Color getColor(byte data) {
+  switch (data) {
+        case 0:
+      return (makeColorRGB(0,0,0));
+          break;
+        case 1:
+          return (makeColorRGB(255,0,0));
+          break;
+      case 2:
+          return (makeColorRGB(0,255,0));
+          break;
+        case 3:
+          return (makeColorRGB(0,0,255));
+          break;
+        case 4:
+      return (makeColorRGB(255,0,255));
+          break;
+        case 5:
+          return (makeColorRGB(255,255,0));
+          break;
+        case 6:
+          return (makeColorRGB(0,255,255));
+          break;
+          default: return OFF;
     }
 }
 
 byte getRealPlayer(byte data) {
-	return (data + 1) % player_num + 1;
+  return (data + 1) % player_num + 1;
 }
 
 byte getPlayer(byte data) {
