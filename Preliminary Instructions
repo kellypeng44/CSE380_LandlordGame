@@ -1,0 +1,16 @@
+1: Pressing in quick succession on any blink will make that blink Rome (it will turn yellow). Pressing 2 times will make the game 2 player, 3 times 3 player, and 4 times 4 player.
+(The game is 2-4 players)
+
+2: Now that Rome has been built it is player 1's turn (player 1's color is RED). They will single click any blink thats not Rome and if possible roads will be built in all directions
+from that blink and will connect to any other blink with at least one of this color roads or Rome itself.
+
+~~ 2.5: I wanted to let each player be able to move one of their blinks to another spot on the board after they have paved, we can constrict this as we playtest and decide what's most fun
+but I think it makes the strategy much more in depth and the game more complex without any additional programing on our part!
+
+3: Player 1's turn is now over and it is 2's (BLUE) they will do the same and probably attempt to pave over some of the RED roads on the board, this will continue for all players and cycles
+between all of them (RED, BLUE, GREEN, MAGENTA)
+
+4: If any player gets all of the faces on a single blink to their color (which means 3 of their roads intersect there) then that blink is now a roadblock and is permenantly owned by that player,
+this means no other players' moves will be able to pave over this blink!
+
+5: Win condition: TO BE DECIDED but for now I thought we could just say that after everybody goes 5 times count up how many faces each player has and most wins.
