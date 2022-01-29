@@ -2,38 +2,42 @@ void setup() {
   // put your setup code here, to run once:
 
 }
-bool isRome, imRome, turning, st, tover, timing;
-byte turn, players, val;
+bool isRome, imRome, turning, st, tover, timing, ending;
+byte turn, players, val, count = 5;
 byte vals[6];
 Color cols[5] = {OFF, RED, BLUE, GREEN, MAGENTA};
 Timer time;
 void loop(){
   if(!isRome){ //build Rome
-    if(buttonDoubleClicked() || buttonMultiClicked()){
-      if(buttonDoubleClicked()) val = 2;
-      else val = min(buttonClickCount(), 4);
-      isRome = imRome = true;
-      turn = 1;
-      players = val; val = 0;
-      setValueSentOnAllFaces(players+3);
+    if(buttonDoubleClicked()){
+      init(2);
+    }else if(buttonMultiClicked()){
+      init(min(buttonClickCount(), 4));
     }
   }else{
-    if(!turning && !st && buttonSingleClicked()){
+    if(!ending && !turning && !st && buttonSingleClicked()){
       turning = st = true;
       setValueSentOnAllFaces(turn);
+    }else if(imRome && time.isExpired() && buttonLongPressed()){ //reset the entire board
+      reset();
+      setValueSentOnAllFaces(18);
     }
   }
   if(timing && time.isExpired()){
     turning = timing = false;
     turn = turn % players + 1;
-    setValueSentOnAllFaces(turn + 11);
+    if(turn == 1 && --count == 0){ //end the game
+      setValueSentOnAllFaces(17);
+      ending = true;
+      time.set(1000);
+    }else setValueSentOnAllFaces(turn + 11);
   }
   FOREACH_FACE(f){
     if(didValueOnFaceChange(f)) switch(val = getLastValueReceivedOnFace(f)){ //mesage reciever
       case 0: break;
       case 1: case 2: case 3: case 4: //relay's signal out
-        if(block()) break;
-        if(has(val) > 0 || imRome){
+        if(block() && vals[0] != val) setValueSentOnFace(16, f); //bounceback clear
+        else if(has(val) > 0 || imRome){
           if(!imRome){
             vals[f] = val;
             vals[opp(f)] = val;
@@ -50,8 +54,8 @@ void loop(){
           players = val-3;
           setValueSentOnAllFaces(val);
           turn = 1;
+          isRome = true;
         }
-        isRome = true;
       break; case 8: case 9: case 10: case 11: //return to relay
         if(st || turning){
           vals[f] = val-7;
@@ -60,21 +64,38 @@ void loop(){
           else{
             time.set(500);
             timing = true;
-            //turning = false;
           }
         }
         tover = true;
       break; case 12: case 13: case 14: case 15:
         if(val - 11 > turn || (turn == players && val == 12)){
           turn = val - 11;
-          turning = st = false;
-          setValueSentOnAllFaces(val);
+          if(turn == 1 && --count == 0){
+            setValueSentOnAllFaces(17);
+            ending = true;
+            time.set(1000);
+          }else{
+            turning = st = false;
+            setValueSentOnAllFaces(val);
+          }
         }
       break; case 16: //clear this tile from step consideration without laying road
         if(!turning) setValueSentOnFace(16, opp(f));
         tover = true;
+      break; case 17: //game end
+        if(!ending){
+          setValueSentOnAllFaces(val);
+          ending = true;
+          time.set(1000);
+        }
+      break; case 18: //game reset
+        if(isRome){
+          setValueSentOnAllFaces(val);
+          reset();
+        }
       break;
     }
+    if(ending && !time.isExpired()) setColor(WHITE);
     else if(st) setColor(ORANGE);
     else if(!imRome) setColorOnFace(cols[vals[f]], f);
     else setColor(YELLOW);
@@ -93,4 +114,15 @@ bool block(){
   bool r = vals[0] != 0;
   if(r) FOREACH_FACE(f) r = r && vals[f] == vals[0];
   return r;
+}
+void reset(){
+  isRome = imRome = turning = st = tover = timing = ending = false;
+  turn = players = val = 0;
+  count = 5;
+  FOREACH_FACE(f) vals[f] = 0;
+}
+void init(byte b){
+  isRome = imRome = true;
+  turn = 1; players = b;
+  setValueSentOnAllFaces(players+3);
 }
