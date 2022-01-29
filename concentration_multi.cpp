@@ -147,7 +147,7 @@ void checkLoop() {
 }
 
 void endLoop() {
-	setColor(getColor(chosen_player+1))
+	setColor(getColor(getRealPlayer(chosen_player)))
 	FOREACH_FACE(f) {
     	if (!isValueReceivedOnFaceExpired(f)) { //a neighbor!
             if (getSignalState(getLastValueReceivedOnFace(f)) == PREPARE) {//This neighbor isn't in RESOLVE. Stay in RESOLVE
@@ -172,7 +172,7 @@ void displaySignalState() {
   	if (warn_timer.isExpired()) {
   		switch (signalState) {
     		case INERT:
-      			setColor(getColor(player+1));
+      			setColor(getColor(getRealPlayer(player)));
       			break;
     		case GO:
     		case RESOLVE:
@@ -209,6 +209,10 @@ Color getColor(data) {
         	return (makeColorRGB(0,255,255));
         	break;
     }
+}
+
+byte getRealPlayer(byte data) {
+	return (data + 1) % player_num + 1;
 }
 
 byte getPlayer(byte data) {
