@@ -1,7 +1,7 @@
-## CSE380_HW1
+# CSE380_HW1
 ___
-# GAME 1
+## GAME 1
 ___
-# GAME 2
+## GAME 2
 ___
-# GAME 3
+## GAME 3

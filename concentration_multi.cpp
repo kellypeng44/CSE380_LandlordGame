@@ -1,10 +1,11 @@
-enum signalStates { PREPARE, INERT, GO, RESOLVE, END };
+enum signalStates { PREPARE, INERT, GO, RESOLVE, CHECK, END };
 byte signalState = PREPARE;
 enum player {PLAYER1, PLAYER2, PLAYER3, PLAYER4, PLAYER5, PLAYER6};//these modes will simply be different colors
 byte player = PLAYER1;//the default mode when the game begins
 byte player_num = 0;
 byte chosen_player = 6;
-Timer timer;
+Timer warn_timer;
+Timer check_timer;
 void loop() {
 	switch (signalState) {
         case PREPARE:
@@ -15,7 +16,11 @@ void loop() {
       	case RESOLVE:
         	playLoop();
         	break;
+      	case CHECK:
+        	checkLoop();
+        	break;
       	case END:
+        	endLoop();
         	break;
     }
 }
@@ -47,6 +52,9 @@ void prepareLoop() {
 				byte sendData = (signalState << 3) + (player);
         		setValueSentOnAllFaces(sendData);
         	}
+          	else {
+              	setValueSentOnAllFaces(0);
+            }
     	}
     }
 }
@@ -75,7 +83,7 @@ void inertLoop() {
           	chosen_player = player;
         }
       	else {
-          	timer.set(1000);
+          	warn_timer.set(1000);
         }
         signalState = GO;
         player = (player + 1) % (player_num);//adds one to game mode, but 3+1 becomes 0
@@ -101,8 +109,15 @@ void goLoop() {
         }
     }
 }
+
 void resolveLoop() {
-    signalState = INERT; //I default to this at the start of the loop. Only if I see a problem does this not happen
+  	if (chosen_player == 6) {
+    	signalState = INERT; //I default to this at the start of the loop. Only if I see a problem does this not happen
+    }
+  	else {
+		check_timer.set(2000);
+      	signalState = CHECK;
+    }
     //look for neighbors who have not moved to RESOLVE
     FOREACH_FACE(f) {
         if (!isValueReceivedOnFaceExpired(f)) { //a neighbor!
@@ -113,8 +128,48 @@ void resolveLoop() {
     }
 }
 
+void checkLoop() {
+	if (check_timer.isExpired()) {
+		setColor(OFF);
+		signalState = END;
+	}
+	else {
+		setColor(WHITE);
+		FOREACH_FACE(f) {
+        	if (!isValueReceivedOnFaceExpired(f)) { //a neighbor!
+            	if (getSignalState(getLastValueReceivedOnFace(f)) == INERT) {//This neighbor isn't in RESOLVE. Stay in RESOLVE
+                	signalState = INERT;
+            	}
+        	}
+    	}
+		setValueSentOnAllFaces(6 << 3);
+	}
+}
+
+void endLoop() {
+	setColor(getColor(chosen_player+1))
+	FOREACH_FACE(f) {
+    	if (!isValueReceivedOnFaceExpired(f)) { //a neighbor!
+            if (getSignalState(getLastValueReceivedOnFace(f)) == PREPARE) {//This neighbor isn't in RESOLVE. Stay in RESOLVE
+				signalState = PREPARE;
+				player = PLAYER1;
+				player_num = 0;
+				chosen_player = 6;
+              	setColor(OFF);
+            }
+    	}
+	}
+	if (buttonDoubleClicked()) {
+		signalState = PREPARE;
+		player = PLAYER1;
+		player_num = 0;
+		chosen_player = 6;
+		setValueSentOnAllFaces(0);
+	}
+}
+
 void displaySignalState() {
-  	if (timer.isExpired()) {
+  	if (warn_timer.isExpired()) {
   		switch (signalState) {
     		case INERT:
       			setColor(getColor(player+1));
