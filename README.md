@@ -1,7 +1,6 @@
 # CSE380_HW1
 ---
 ## GAME concentration_multi(temp)
-___
 ### prepare state
 all lights are off
 single click anyone to set the number of players
@@ -15,6 +14,4 @@ all lights turn white to validate
 then all blink will turn to the color of the player who chose that blink  
 double click to reset to prepare state
 ## GAME 2
-___
 ## GAME 3
-___
