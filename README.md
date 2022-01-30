@@ -1,6 +1,8 @@
 # The Landlord Game
 ### CSE380 HW1 the Move38 Game Jam
 
+<div style="text-align: left"><img width='400' src="https://github.com/kellypeng44/CSE380-blinkgame/blob/master/Blinks_Game_Label_Art.png"></img></div>
+
 | Number of Blinks  | Number of Players | Duration of Gameplay | Recommended Ages | Difficulty            |
 |:-----------------:|:-----------------:|:--------------------:|:----------------:|:---------------------:|
 | any               | 2 - 6 players     |  2 - 5 minutes       | 6+               | ⍺ to number of blinks |
