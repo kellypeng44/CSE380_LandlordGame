@@ -3,7 +3,7 @@ GAME concentration_multi(temp)
 
 | Number of Blinks   | Number of Players | Duration of Gameplay | Recommended Ages | Difficulty.           |
 |:------------------:|:-----------------:|:--------------------:|:----------------:|:---------------------:|
-| any                | 2 - 6 players     |  2 - 5 minutes       | 6+               | ∝ to number of blinks |
+| any                | 2 - 6 players     |  2 - 5 minutes       | 6+               | ⍺ to number of blinks |
 
 ### Setup
 * Connect the blinks in any arrangement, as long as they are all connected.
