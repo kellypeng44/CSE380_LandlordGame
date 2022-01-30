@@ -6,7 +6,7 @@ bool isRome, imRome, turning, st, tover, timing, ending;
 byte turn, players, val, count = 5;
 byte vals[6];
 Color cols[5] = {OFF, RED, BLUE, GREEN, MAGENTA};
-Timer time;
+Timer time, flash;
 void loop(){
   if(!isRome){ //build Rome
     if(buttonDoubleClicked()){
@@ -22,6 +22,7 @@ void loop(){
       reset();
       setValueSentOnAllFaces(18);
     }
+    if(imRome && flash.isExpired()) flash.set(1000);
   }
   if(timing && time.isExpired()){
     turning = timing = false;
@@ -31,6 +32,7 @@ void loop(){
       ending = true;
       time.set(1000);
     }else setValueSentOnAllFaces(turn + 11);
+    if(imRome) flash.set(1000);
   }
   FOREACH_FACE(f){
     if(didValueOnFaceChange(f)) switch(val = getLastValueReceivedOnFace(f)){ //mesage reciever
@@ -98,7 +100,8 @@ void loop(){
     if(ending && !time.isExpired()) setColor(WHITE);
     else if(st) setColor(ORANGE);
     else if(!imRome) setColorOnFace(cols[vals[f]], f);
-    else setColor(YELLOW);
+    else if(ending || flash.getRemaining() > 100) setColor(YELLOW);
+    else setColor(cols[turn]);
   }
   if(tover) st = tover = false;
 }
@@ -123,6 +126,7 @@ void reset(){
 }
 void init(byte b){
   isRome = imRome = true;
+  flash.set(1000);
   turn = 1; players = b;
   setValueSentOnAllFaces(players+3);
 }
