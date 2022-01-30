@@ -1,9 +1,12 @@
 # CSE380 HW1 
 GAME concentration_multi(temp)
 
-| Number of Blinks   | Number of Players | Duration of Gameplay | Recommended Ages | Difficulty.           |
-|:------------------:|:-----------------:|:--------------------:|:----------------:|:---------------------:|
-| any                | 2 - 6 players     |  2 - 5 minutes       | 6+               | ⍺ to number of blinks |
+| Number of Blinks  | Number of Players | Duration of Gameplay | Recommended Ages | Difficulty           |
+|:-----------------:|:-----------------:|:--------------------:|:----------------:|:---------------------:|
+| any               | 2 - 6 players     |  2 - 5 minutes       | 6+               | ⍺ to number of blinks |
+
+### Objective
+Concentrate on and remember the selection of blinks from yourself and your competition while collecting new blinks.
 
 ### Setup
 * Connect the blinks in any arrangement, as long as they are all connected.
