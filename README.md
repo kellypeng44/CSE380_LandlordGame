@@ -1,17 +1,27 @@
-# CSE380_HW1
----
-## GAME concentration_multi(temp)
-### prepare state
-all lights are off
-single click anyone to set the number of players
-double click to start the game
-### play state
-at each player's tern, single click to select a single blink  
-nothing happened -- earn 1 pt  
-turn white for a second -- earn no pt
-### end state
-all lights turn white to validate  
-then all blink will turn to the color of the player who chose that blink  
-double click to reset to prepare state
-## GAME 2
-## GAME 3
+# CSE380 HW1 
+GAME concentration_multi(temp)
+
+| Number of Blinks  | Number of Players | Duration of Gameplay | Recommended Ages |
+|:-----------------:|:-----------------:|:--------------------:|:----------------:|
+| recommended 6+    | 2 - 6 players     |  2 - 5 minutes       | 6+               |
+
+### Setup
+* Connect the blinks in any arrangement, as long as they are all connected.
+* In the setup stage, all the blinks have the lights off. 
+* Click on any blink to set the number of players. 
+* The number of players will shown as different assigned colors on the faces of the blink.
+* Double-click the same blink to begin the game.
+
+### Gameplay
+* All the blinks will have the same color to denote the player's turn.
+* Single click any blink to select.
+  * Continue to the next player if the blink is selected for the first time.
+  * The blink turns white if the blink was selected already.
+* Each player can choose one blink in each round until all the blinks are selected.
+* The blink belongs to the player who first select it.
+
+### Win condition
+* All the blinks turn white to validate when all the blinks are selected.
+* Each of the blinks turns into the color of the player that were selected by.
+* Count the number of blinks in each color and the one with the most wins.
+* Double click to return to the setup stage.
