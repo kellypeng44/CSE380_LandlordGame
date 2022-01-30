@@ -48,6 +48,9 @@ void prepareLoop() {
           }
           if (buttonSingleClicked()) {
               player_num = (player_num + 1) % 7;
+	      if (player_num == 1) {
+		      player_num == 2;
+	      }
           }
           if (buttonDoubleClicked() && player_num != 0) {
                 player = player_num - 1;
