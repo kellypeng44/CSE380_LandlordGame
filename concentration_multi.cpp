@@ -38,7 +38,7 @@ void prepareLoop() {
           setValueSentOnAllFaces(sendData);
       }
       else {
-          if (player_num == 0) {
+          if (player_num <= 1) {
               setColor(OFF);
           }
           else {
