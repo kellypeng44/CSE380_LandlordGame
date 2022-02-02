@@ -31,5 +31,11 @@ Concentrate on and remember the selection of blinks from yourself and your compe
 * Count the number of blinks in each color and the one with the most wins.
 * Double click to return to the setup stage.
 
-### Demonstration video
+## Demonstration video
 [https://youtu.be/MCWaPYWTF3M](https://youtu.be/MCWaPYWTF3M)
+
+## Made by
+<b>Henry Chen</b> - game testing on simulator <br />
+<b>Kelly Peng</b> - game art design, instruction forming, story design <br />
+<b>Liam Rea</b> - game testing with Blinks, video editing <br />
+<b>Xinyu Xu</b> - programming, game design
